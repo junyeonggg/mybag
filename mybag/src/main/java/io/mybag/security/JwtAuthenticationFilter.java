@@ -3,15 +3,20 @@ package io.mybag.security;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
@@ -19,30 +24,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		// 1. 헤더 추출
-		String header = request.getHeader("Authorization");
-
-		// 2. Bearer로 시작하는지 검증
-		if (header != null && header.startsWith("Bearer ")) {
-
-			// 3. "Bearer "을 제거하고 토큰만 추출
-			String token = header.substring(7);
-
-			// 4. 유효한 토큰인지 확인
-			if (jwtTokenProvider.validateToken(token)) {
-
-				// 5. 토큰에서 username 추출
-				String username = jwtTokenProvider.getUsernameFromToken(token);
-
-				// 6. UsernamePasswordAuthenticationToken 생성
-				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-						username, null, null);
-				
-				//7. SecurityContextHolder의 context에 인증을 저장한다.
-				SecurityContextHolder.getContext().setAuthentication(authentication);
+		String requestURI = request.getRequestURI();
+		if (requestURI.startsWith("/api/") && !requestURI.equals("/api/auth/login")) {
+			String header = request.getHeader("Authorization"); //헤더 추출
+			if (header != null && header.startsWith("Bearer ")) { // 헤더에 오류가 없으면 진행
+				String token = header.substring(7);
+				if (jwtTokenProvider.validateToken(token)) { // 토큰 유효성 검사
+					String username = jwtTokenProvider.getUsernameFromToken(token);
+					UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+							username, null, null);
+					authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					SecurityContextHolder.getContext().setAuthentication(authentication);
+				}else {
+					// 토큰에 문제가 있으면
+					UsernamePasswordAuthenticationToken unAuthentication = new UsernamePasswordAuthenticationToken(null,null,null);
+					SecurityContextHolder.getContext().setAuthentication(unAuthentication);
+				}
+			} else {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				response.getWriter().write("Authorization header is missing");
+				return;
 			}
 		}
-		//8. 다음 필터체인으로 넘긴다.
 		filterChain.doFilter(request, response);
 	}
 }

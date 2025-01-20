@@ -1,5 +1,6 @@
 package io.mybag.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,19 +13,25 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import io.mybag.security.JwtAuthenticationFilter;
+import io.mybag.security.JwtTokenProvider;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf -> csrf.disable())
+			.authorizeHttpRequests(authorizeHttpRequests->authorizeHttpRequests
+					.requestMatchers("/login","/api/auth/login").permitAll()
+					.requestMatchers("/api/**").authenticated()
+					.anyRequest().authenticated())
 				.securityContext(securityContext -> securityContext
 						.securityContextRepository(new HttpSessionSecurityContextRepository()))
-				.formLogin(formLogin -> formLogin.loginPage("/login")
-						.defaultSuccessUrl("/mybag"))
-				.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+				.formLogin(formLogin -> formLogin.loginPage("/login").defaultSuccessUrl("/mybag"))
+				.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 
