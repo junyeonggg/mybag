@@ -5,18 +5,25 @@
 <title>나의 책가방</title>
 </head>
 <body>
-	<table>
-		<tr>
-			<th>ID</th>
-			<td><input type="text" placeholder="ID"></td>
-		</tr>
-		<tr>
-			<th>PW</th>
-			<td><input type="password" placeholder="ID"></td>
-		</tr>
-		<tr>
-			<td colspan="2"><input type="button" value="회원가입" style="width: 100%;"></td>
-		</tr>
-	</table>
+	<form action="/signup" method="post">
+		<table>
+			<tr>
+				<th>Email</th>
+				<td><input type="email" name="username" placeholder="email"></td>
+			</tr>
+			<tr>
+				<th>Pw</th>
+				<td><input type="password" name="password" placeholder="pw"></td>
+			</tr>
+			<tr>
+				<th>NickName</th>
+				<td><input type="text" name="nickname" placeholder="nickname"></td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="submit" value="회원가입"
+					style="width: 100%;"></td>
+			</tr>
+		</table>
+	</form>
 </body>
 </html>

@@ -5,7 +5,13 @@
 <title>나의 책가방</title>
 </head>
 <body>
-책가방
+<p th:text="${nickname != null ? nickname+'의 가방' : '로그인되지 않았습니다.'}"> </p>
+
+<div>
+<button>카테고리 추가하기</button>
+<button>내용 추가하기</button>
+</div>
+
 
 </body>
 </html>
