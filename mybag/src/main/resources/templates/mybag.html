@@ -1,17 +1,52 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+<style type="text/css">
+.flex_container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.flex_items {
+	margin: 10px 20px;
+}
+</style>
 <meta charset="UTF-8">
 <title>나의 책가방</title>
 </head>
 <body>
-<p th:text="${nickname != null ? nickname+'의 가방' : '로그인되지 않았습니다.'}"> </p>
+	<header>
+		<p
+			th:text="${authentication != null ? authentication.nickname+'의 가방' : '로그인되지 않았습니다.'}">
+		</p>
+		<button class="header_flex_items">카테고리 추가하기</button>
+		<input id="category_name" type="text" placeholder="카테고리"> <input
+			id="username" th:value="${authentication.username}" type="hidden">
+		<input id="btn_save_category" value="입력" type="button">
+	</header>
 
-<div>
-<button>카테고리 추가하기</button>
-<button>내용 추가하기</button>
-</div>
-
-
+	<section class="category_section">
+		<div class="flex_container" th:if="${category.type == 'header'}"
+			th:each="category : ${categories}">
+			<!-- 카테고리 헤더 -->
+			<div class="flex_items">
+				<h2 th:text="${category.content}"></h2>
+			</div>
+			<!-- 카테고리 바디 --> <!-- categories 를 또 반복 하는데, type==body 인것만 반복, 이 body.parent_id가 첫번째 반복인 헤더의 id와 일치하면 랜더링 -->
+			<div class="flex_items"
+				th:if="${body.type == 'body' and body.parent_id == category.id}"   
+				th:each="body : ${categories}">
+				<span th:text="${body.content}"></span> 
+				
+				<input type="button"value="▽"> <!-- 버튼 클릭시 detail 들 출력 20250124 에 할일 -->
+			</div>
+			<!-- 카테고리 바디 추가 -->
+			<div class="flex_items">
+				<button>내용 추가</button>
+			</div>
+		</div>
+	</section>
+	<script th:src="@{js/mybag.js}"></script>
 </body>
 </html>
