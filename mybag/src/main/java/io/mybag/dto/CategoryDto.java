@@ -9,8 +9,7 @@ import lombok.ToString;
 @ToString
 public class CategoryDto {
 	private int id;
-	private String content;
+	private String title;
 	private String username;
-	private String type;
 	private int parent_id;
 }

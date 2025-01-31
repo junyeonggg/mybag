@@ -32,8 +32,7 @@
 		<div class="flex_items" th:each="category : ${categories}">
 			<!-- 카테고리 헤더 -->
 			<h2>
-				<a th:if="${category.parent_id == 0}" th:href="${'/mybag/'+{category.id}}" th:text="${category.title}"></a>
-				<a th:if="${category.parent_id != 0}" th:href="${'/mybag/'+{category.parent_id}+'/'+{category.id}}" th:text="${category.title}"></a>
+				<span th:text="${category.title}"></span>
 			</h2>
 		</div>
 	</section>

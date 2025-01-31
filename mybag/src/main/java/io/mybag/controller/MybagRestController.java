@@ -17,9 +17,6 @@ public class MybagRestController {
 	private MybagService mybagService;
 	@PostMapping("")
 	public ResponseEntity<Object> saveCategory(@RequestBody CategoryDto categoryDto){
-		System.out.println("들어옴");
-		mybagService.saveCategory(categoryDto);
-		
-		return ResponseEntity.ok(categoryDto);
+		return ResponseEntity.ok(mybagService.saveCategory(categoryDto));
 	}
 }
