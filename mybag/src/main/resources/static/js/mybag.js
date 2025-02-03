@@ -7,7 +7,7 @@ document.getElementById("btn_save_category").addEventListener("click", () => {
 		title: title,
 		parent_id : parent_id
 	}
-	fetch("/mybag", {
+	fetch("/api/mybag", {
 		method: "post",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(data)

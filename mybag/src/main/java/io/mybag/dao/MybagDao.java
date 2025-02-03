@@ -6,8 +6,10 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import io.mybag.dto.CategoryDto;
+import io.mybag.dto.ContentDto;
 
 @Mapper
 public interface MybagDao {
@@ -24,5 +26,14 @@ public interface MybagDao {
 
 	@Select("SELECT * FROM category_tbl where parent_id = #{id}")
 	List<CategoryDto> getCategoryById(int id);
+
+	@Select("SELECT * FROM content_tbl where parent_id = #{id}")
+	ContentDto getContent(int id);
+
+	@Insert("INSERT INTO content_tbl (content,parent_id) VALUES(#{content},#{parent_id})")
+	void insertContent(ContentDto contentDto);
+
+	@Update("UPDATE content_tbl SET content = #{content} WHERE parent_id = #{parent_id}")
+	void updateContent(ContentDto contentDto);
 
 }
