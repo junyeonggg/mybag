@@ -120,3 +120,47 @@ function saveContent(self) {
 	}).then(window.location.reload())
 }
 
+
+document.getElementById("btnChRank").addEventListener("click", () => {
+	let modal = document.querySelector("#modalRank");
+	modal.style.display = 'flex';
+
+})
+
+function upRank(el) {
+	const modalList = document.querySelector("#modalDiv")
+	const rankList = document.querySelectorAll(".rankDiv");
+	const self = el.parentElement.parentElement.getAttribute("data-id");
+	rankList.forEach((value, index) => {
+		if (self == value.getAttribute("data-id") && index != 0) {
+			modalList.insertBefore(value, rankList[index - 1]);
+		}
+	})
+}
+function downRank(el) {
+	const modalList = document.querySelector("#modalDiv")
+	const rankList = document.querySelectorAll(".rankDiv");
+	const self = el.parentElement.parentElement.getAttribute("data-id");
+	rankList.forEach((value, index) => {
+		if (self == value.getAttribute("data-id") && index != rankList.length - 1) {
+			modalList.insertBefore(value, rankList[index + 2]);
+		}
+	})
+}
+
+function saveRank() {
+	const rankList = document.querySelectorAll(".rankDiv");
+	const newRank = [];
+	rankList.forEach(v => newRank.push(v.getAttribute("data-id")))
+	console.log(newRank)
+	fetch("/api/mybag/saveRank", {
+		method: "post",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(newRank)
+	}).then(window.alert("적용되었습니다."))
+	.then(window.location.reload())
+}
+
+

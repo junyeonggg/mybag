@@ -52,4 +52,15 @@ public class MybagService {
 
 	}
 
+	public CategoryDto findById(int parent_id) {
+		return mybagDao.findById(parent_id);
+	}
+
+	public void chRank(List<Integer> newRank) {
+		for(int i = 0; i < newRank.size(); i++) {
+			System.out.println(i);
+			mybagDao.chRank(i,newRank.get(i));
+		}
+	}
+
 }

@@ -1,6 +1,7 @@
 package io.mybag.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.mybag.dao.UserDao;
 import io.mybag.dto.CategoryDto;
+import io.mybag.dto.PathDto;
 import io.mybag.dto.UserDto;
 import io.mybag.service.MybagService;
 
@@ -44,6 +46,11 @@ public class MybagController {
 		// Root Directory
 		Optional.ofNullable(principal).ifPresent((p) -> {
 			List<CategoryDto> categories = mybagService.getCategoryByUsername(p.getName());
+			
+			List<PathDto> path = new ArrayList<>();
+			path.add(new PathDto("..",""));
+			model.addAttribute("path", path);
+			
 			model.addAttribute("categories", categories);
 			model.addAttribute("parent_id", 0);
 			categories.forEach(c -> System.out.println("c : " + c.toString()));
@@ -55,6 +62,13 @@ public class MybagController {
 	public String mybagId(Principal principal, Model model, @PathVariable("parent_id") int parent_id) {
 		Optional.ofNullable(principal).ifPresent((p) -> {
 			List<CategoryDto> categories = mybagService.getCategoryById(parent_id);
+
+			List<PathDto> path = new ArrayList<>();
+			CategoryDto pathCate = mybagService.findById(parent_id);
+			path.add(new PathDto("..",""));
+			path.add(new PathDto(pathCate.getTitle(),"/"+String.valueOf(pathCate.getId())));
+			model.addAttribute("path", path);
+			
 			model.addAttribute("categories", categories);
 			model.addAttribute("parent_id", parent_id);
 			categories.forEach(c -> System.out.println("c : " + c.toString()));
@@ -67,6 +81,15 @@ public class MybagController {
 			@PathVariable("id") int id) {
 		Optional.ofNullable(principal).ifPresent((p) -> {
 			List<CategoryDto> categories = mybagService.getCategoryById(id);
+			
+			List<PathDto> path = new ArrayList<>();
+			CategoryDto parentCate = mybagService.findById(parent_id);
+			CategoryDto childCate = mybagService.findById(id);
+			path.add(new PathDto("..",""));
+			path.add(new PathDto(parentCate.getTitle(),"/"+String.valueOf(parentCate.getId())));
+			path.add(new PathDto(childCate.getTitle(),"/"+String.valueOf(parentCate.getId())+"/"+String.valueOf(childCate.getId())));
+			model.addAttribute("path", path);
+			
 			model.addAttribute("categories", categories);
 			model.addAttribute("parent_id", id);
 			categories.forEach(c -> System.out.println("c : " + c.toString()));

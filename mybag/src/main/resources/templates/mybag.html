@@ -11,6 +11,58 @@
 .flex_items {
 	margin: 10px 20px;
 }
+
+.ulPath {
+	list-style: none;
+	display: flex;
+}
+
+#modalRank {
+	display: none; /* 숨기기 */
+	position: fixed; /* 화면에 고정 */
+	left: 0;
+	top: 0;
+	z-index: 1; /* 다른 요소들 위에 표시 */
+	width: 100%; /* 전체 화면 */
+	height: 100%; /* 전체 화면 */
+	background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+	align-items: center;
+	justify-content: center;
+}
+
+#modalDiv {
+	background-color: white;
+	border-radius: 5px;
+	min-width: 500px;
+	min-height: 500px;
+	display: flex;
+	flex-direction: column;
+
+}
+.btnFlex {
+	display: flex;
+	flex-direction: column;
+}
+
+.chBtn {
+	width: 20px;
+	height: 15px;
+	text-align: center;
+	display : flex;
+	flex-direction : row;
+	justify-content : center;
+	align-items : center;
+	padding: 1px;
+}
+.rankDiv{
+	display: flex;
+	align-items: center;
+	margin: 10px;
+}
+.spanArrow {
+	font-size: 8px; /* 기본 폰트 크기 */
+	transform: scaleX(2);
+}
 </style>
 <meta charset="UTF-8">
 <title>나의 책가방</title>
@@ -20,20 +72,47 @@
 		<p
 			th:text="${authentication != null ? authentication.nickname+'의 가방' : '로그인되지 않았습니다.'}">
 		</p>
-		<button class="header_flex_items">카테고리 추가하기</button>
 		<input id="title" type="text" placeholder="카테고리"> <input
 			id="username" th:value="${authentication.username}" type="hidden">
-			<input
-			id="parent_id" th:value="${parent_id}" type="hidden">
-		<input id="btn_save_category" value="입력" type="button">
+		<input id="parent_id" th:value="${parent_id}" type="hidden"> <input
+			id="btn_save_category" value="입력" type="button">
 	</header>
 
 	<section class="flex_container">
+		<div class="path">
+			<ul class="ulPath">
+				<li th:each="p : ${path}"><a
+					th:href="@{/mybag{path}(path=${p.path})}" th:text="${p.title}"></a><span>/</span></li>
+			</ul>
+		</div>
+		<div>
+			<button id="btnChRank">순서 변경</button>
+			<div id="modalRank">
+				<div id="modalDiv">
+					<div th:each="category : ${categories}" class="rankDiv"
+						th:data-id="${category.id}">
+						<div class="btnFlex">
+							<button class="chBtn" onclick="upRank(this)">
+								<span class="spanArrow">▲</span>
+							</button>
+							<button class="chBtn" onclick="downRank(this)">
+								<span class="spanArrow">▼</span>
+							</button>
+						</div>
+						<span th:text="${category.title}"></span>
+					</div>
+				</div>
+				<button onclick="saveRank()">적용</button>
+			</div>
+		</div>
 		<div class="flex_items" th:each="category : ${categories}">
 			<!-- 카테고리 헤더 -->
 			<h2>
-				<a th:if="${category.parent_id == 0}" th:href="${'/mybag/'+{category.id}}" th:text="${category.title}"></a>
-				<a th:if="${category.parent_id != 0}" th:href="${'/mybag/'+{category.parent_id}+'/'+{category.id}}" th:text="${category.title}"></a>
+				<a th:if="${category.parent_id == 0}"
+					th:href="${'/mybag/'+{category.id}}" th:text="${category.title}"></a>
+				<a th:if="${category.parent_id != 0}"
+					th:href="${'/mybag/'+{category.parent_id}+'/'+{category.id}}"
+					th:text="${category.title}"></a>
 			</h2>
 		</div>
 	</section>
