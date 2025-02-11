@@ -1,3 +1,5 @@
+
+
 document.getElementById("btn_save_category").addEventListener("click", () => {
 	const username = document.querySelector("#username").value;
 	const title = document.querySelector("#title").value;
@@ -51,10 +53,13 @@ function outPutContent(btn) {
 
 				const divEl = document.createElement("div");
 				const innerHtml = marked.parse(data,markedOptions)
+				
 				divEl.innerHTML = innerHtml
 				btn.parentElement.append(btnEl);
 				btn.parentElement.append(divEl);
 				btn.parentElement.setAttribute("data-open", "true")
+				
+				hljs.highlightAll()
 			})
 	}
 }
@@ -97,9 +102,11 @@ function previewInput(previewId){
 	const markdownInput =document.getElementById(`textarea${previewId}`); 
 	const preview = document.getElementById(`preview${previewId}`)
 	preview.innerHTML = marked.parse(markdownInput.value,markedOptions);
+	hljs.highlightAll()
 	markdownInput.addEventListener("input",()=>{
 		const markdownText = markdownInput.value;
 		preview.innerHTML = marked.parse(markdownText,markedOptions)
+		hljs.highlightAll()
 	})
 	
 }
